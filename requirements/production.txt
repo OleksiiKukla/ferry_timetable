@@ -1,0 +1,11 @@
+-r base.txt
+
+
+black==22.12.0  # https://github.com/psf/black
+flake8==6.0.0  # https://github.com/PyCQA/flake8
+flake8-isort==6.0.0  # https://github.com/gforcada/flake8-isort
+beautifulsoup4==4.12.2
+requests==2.31.0
+pandas==2.1.1
+lxml
+geopy

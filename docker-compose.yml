@@ -1,0 +1,140 @@
+version: '3.7'
+
+services:
+
+  ferry:
+    container_name: ferry-timetable
+    hostname: ferry-timetable
+    image: ferry-timetable
+    build:
+      context: .
+      dockerfile: ./docker/venv/Dockerfile
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "8001:8000"
+    depends_on:
+      - ferry-db
+      - redis
+    links:
+      - ferry-db
+      - redis
+    restart: always
+    networks:
+      - python-net
+    volumes:
+      - .:/app
+
+  worker:
+    container_name: worker
+    hostname: worker
+    image: worker
+    build:
+      context: .
+      dockerfile: ./docker/venv/Dockerfile.celery
+    env_file:
+      - .env
+    restart: always
+    command: celery -A app.celery_ferry.tasks worker -l info
+    depends_on:
+      - ferry-db
+      - redis
+    links:
+      - ferry-db
+      - redis
+    networks:
+      - python-net
+    volumes:
+      - .:/app
+
+
+  beat:
+    container_name: beat
+    hostname: beat
+    image: beat
+    build:
+      context: .
+      dockerfile: ./docker/venv/Dockerfile.celery-beat
+    env_file:
+      - .env
+    restart: always
+    command: celery -A app.celery_ferry.tasks beat -l info
+    depends_on:
+      - ferry-db
+      - redis
+      - worker
+    links:
+      - ferry-db
+      - redis
+      - worker
+    networks:
+      - python-net
+    volumes:
+      - .:/app
+
+  flower:
+    container_name: flower
+    hostname: flower
+    image: flower
+    build:
+      context: .
+      dockerfile: ./docker/venv/Dockerfile.flower
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - '5555:5555'
+    command: celery -A app.celery_ferry.tasks flower --address=0.0.0.0
+    depends_on:
+      - ferry-db
+      - worker
+    links:
+      - ferry-db
+      - worker
+    networks:
+      - python-net
+    volumes:
+      - .:/app
+
+  ferry-db:
+    container_name: ferry-db
+    image: postgres:15-alpine
+    hostname: ferry-db
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - python-net
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_python_ferry:/var/lib/postgresql/data
+
+
+  redis:
+    image: redis:6.0
+    container_name: redis
+    hostname: redis
+    ports:
+      - "6381:6379"
+    networks:
+      - python-net
+    restart: always
+    volumes:
+      - ferry_redis_data:/var/lib/redis/data
+
+networks:
+  python-net:
+    driver: bridge
+    name: python-net
+
+volumes:
+  postgres_python_ferry:
+  ferry_redis_data:

@@ -1,0 +1,73 @@
+.idea/
+.vscode/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+.pytest_cache
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-wheel-metadata/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.hypothesis/
+.coverage
+
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+static/
+media/
+
+# Airflow stuff
+airflow/logs/
+airflow/*.pid
+
+# celery beat schedule file
+celerybeat-schedule
+celerybeat.pid
+
+# dotenv and direnv
+.envrc
+# pyenv
+.python-version
+
+# virtualenv
+.venv
+db.sqlite3
+sql
+
+# tmp files
+tmp/
+
+.DS_Store
+

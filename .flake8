@@ -1,0 +1,7 @@
+[flake8]
+extend-ignore = ANN002 ANN003 ANN102 ANN101
+suppress-none-returning=True
+suppress-dummy-args=True
+allow-star-arg-any=True
+max-line-length = 120
+exclude = telegram-template/alembic/,venv/
