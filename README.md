@@ -18,7 +18,7 @@ ngrok http 8001
 
 OR use serveo
 
-ssh -R telegram_template:80:localhost:8001 serveo.net
+ssh -R ferry_timetable:80:localhost:8001 serveo.net
 
 
 

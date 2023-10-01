@@ -1,9 +1,10 @@
-from .worker import app
-from app.db.session import dispose_engine, get_or_create_engine, get_or_create_session
-from app.logging import start_logging
 import asyncio
-from app.timetable.parser import Parser
 import logging
+
+from app.db.session import get_or_create_session
+from app.timetable.parser import Parser
+
+from .worker import app
 
 logger = logging.getLogger(__name__)
 
@@ -20,4 +21,3 @@ async def _parse_polferries() -> None:
     await session.close()
 
     logger.info("Polferries parsed.")
-

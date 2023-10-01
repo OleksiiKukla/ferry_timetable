@@ -1,15 +1,13 @@
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-from app.crud.crud_port import port_crud
+
 from app.crud.crud_country import country_crud
 from app.crud.crud_ferry import ferry_crud
+from app.crud.crud_port import port_crud
 from app.schemas.ferry_schemas import FerryCreateSchemas
-from app.schemas.port_schemas import PortSchemas
-from app.utils import replace_polish_chars
-from app.utils import get_country_from_city
-
-
+from app.utils import get_country_from_city, replace_polish_chars
 
 
 class Parser:
@@ -19,7 +17,6 @@ class Parser:
         r = requests.get(url)
         soup = BeautifulSoup(r.text, "lxml")
         return soup
-
 
     async def parser_polferries(self, db):
         """Parser timetable https://polferries.pl/cargo/rozklad.html?code=sy"""
@@ -60,18 +57,12 @@ class Parser:
         find_all_table = soup.find_all("div", class_="tab-content")  # выделяем 2 таблицы
 
         for div_num in range(len(find_all_table)):
-            find_all_month = find_all_table[div_num].find_all(
-                "div", class_="panel-collapse"
-            )  # находим месяца
+            find_all_month = find_all_table[div_num].find_all("div", class_="panel-collapse")  # находим месяца
             for month_num in range(len(find_all_month)):
                 all_str_table = (
-                    find_all_month[month_num]
-                    .find("table", class_="rozklad-tabela")
-                    .find_all("tr")
+                    find_all_month[month_num].find("table", class_="rozklad-tabela").find_all("tr")
                 )  # в каждой таблице выделяем строки
-                for one_str_of_table_num in range(
-                        len(all_str_table)
-                ):  # проходим строки таблицы
+                for one_str_of_table_num in range(len(all_str_table)):  # проходим строки таблицы
                     if one_str_of_table_num == 1:
                         arrival_sailing = all_str_table[one_str_of_table_num].find("td")
                         arrival_sailing = arrival_sailing.get_text()
@@ -85,18 +76,13 @@ class Parser:
                         try:
                             arrival_port = await self.create_port(arrival, db)
                             sailing_port = await self.create_port(sailing, db)
-                            print(sailing_port)
                         except:
                             continue
                     if one_str_of_table_num >= 2:
                         date_time_ferry = all_str_table[one_str_of_table_num].find_all("td")
-                        for day in range(
-                                len(date_time_ferry)
-                        ):  # проходим дни по каждой строке таблицы
+                        for day in range(len(date_time_ferry)):  # проходим дни по каждой строке таблицы
                             if day == 0:  # находим время прибытия отплытия
-                                time_arrival_sailing = (
-                                    date_time_ferry[day].get_text().split(" - ")
-                                )
+                                time_arrival_sailing = date_time_ferry[day].get_text().split(" - ")
                                 time_arrival = time_arrival_sailing[1]
                                 time_sailing = time_arrival_sailing[0]
 
@@ -104,8 +90,12 @@ class Parser:
                                 if date_time_ferry[day].get_text():
                                     name_one = date_time_ferry[day].get_text()
                                     try:
-                                        date_ferry = f"{str(month_list[month_num][1]).zfill(2)}-{str(month_list[month_num][0]).zfill(2)}-{str(day).zfill(2)}"
-                                        date_ferry = datetime.strptime(date_ferry, '%Y-%m-%d')
+                                        date_ferry = (
+                                            f"{str(month_list[month_num][1]).zfill(2)}-"
+                                            f"{str(month_list[month_num][0]).zfill(2)}-"
+                                            f"{str(day).zfill(2)}"
+                                        )
+                                        date_ferry = datetime.strptime(date_ferry, "%Y-%m-%d")
                                         name_ferry = name_of_ferry_dir[name_one]
                                     except KeyError:
                                         continue
@@ -116,8 +106,9 @@ class Parser:
                                             time_departure=time_sailing,
                                             time_arrival=time_arrival,
                                             port_departure_id=sailing_port.id,
-                                            port_arrival_id=arrival_port.id
-                                        ), db
+                                            port_arrival_id=arrival_port.id,
+                                        ),
+                                        db,
                                     )
                                     response.append(ferry)
                                     # print(name_ferry, date_ferry , time_sailing, time_arrival, sailing, arrival)

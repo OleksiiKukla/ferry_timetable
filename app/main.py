@@ -5,10 +5,9 @@ from fastapi import FastAPI
 
 from app.api.api import api
 from app.core.config import settings
-from app.db.session import dispose_engine, get_or_create_engine, get_or_create_session
+from app.db.session import dispose_engine, get_or_create_engine
 from app.logging import start_logging
 from app.telegtam_bot.bot import Bot, Dispatcher, bot, dp
-from app.timetable.parser import Parser
 
 app = FastAPI(
     title="Name of service",
