@@ -126,6 +126,5 @@ class Parser:
     async def create_port(self, city: str, db):
         country, abbreviation = await get_country_from_city(city)
         country = await country_crud.get_or_create(country, abbreviation, db)
-        print(country)
         port = await port_crud.get_or_create_by_name(city, country.id, db)
         return port

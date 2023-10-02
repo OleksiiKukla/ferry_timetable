@@ -42,15 +42,14 @@ async def start(message: types.Message):
 async def handle_direction_selection(message: types.Message):
     is_pl_to_se = message.text == "From PL to SE"
 
-    session = get_or_create_session()
+    async with get_or_create_session() as session:
 
-    if f"{CountriesAbbreviatedName.PL.name} to SE" in message.text:
-        country_departure = await country_crud.get_by_name(Countries.POLAND.value, session)
-    else:
-        country_departure = await country_crud.get_by_name(Countries.SWEDEN.value, session)
+        if f"{CountriesAbbreviatedName.PL.name} to SE" in message.text:
+            country_departure = await country_crud.get_by_name(Countries.POLAND.value, session)
+        else:
+            country_departure = await country_crud.get_by_name(Countries.SWEDEN.value, session)
 
-    keyboard = await generate_port_keyboard(country_departure, session)
-    await session.close()
+        keyboard = await generate_port_keyboard(country_departure, session)
 
     country = "SE"
     if is_pl_to_se:
@@ -81,10 +80,52 @@ async def handle_today_ferries(message: types.Message):
         selected_port = match.group(1).lower()
         selected_country = match.group(2)
 
-        session = get_or_create_session()
-        keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        now = datetime.datetime.now()
+        async with get_or_create_session() as session:
+            keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+            now = datetime.datetime.now()
 
+            port_from = await port_crud.get_port_by_name(selected_port.lower(), session)
+            country_to = await country_crud.get_by_name(
+                CountriesAbbreviatedName.SE.value
+                if selected_country == CountriesAbbreviatedName.SE.name
+                else CountriesAbbreviatedName.PL.value,
+                session,
+            )
+
+            ferries = await _get_ferries(port_from, country_to, now, session)
+            formatted_ferries = await _format_ferries_as_string(ferries)
+
+        main_menu = KeyboardButton("/start")
+        keyboard.add(main_menu)
+
+        await message.answer(f"{formatted_ferries}", reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: re.match(r"^Choose a date from .* to (SE|PL)$", message.text))
+async def handle_choose_date(message: types.Message):
+    match = re.match(r"^Choose a date from (.*) to (SE|PL)$", message.text)
+    if match:
+        selected_port = match.group(1).lower()
+        selected_country = match.group(2)
+
+    keyboard = generate_date_keyboard(selected_port, selected_country)
+    await message.answer(
+        f"Please choose a departure date from {selected_port.capitalize()} to {selected_country}:",
+        reply_markup=keyboard,
+    )
+
+
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith("Selected date from"))
+async def handle_selected_date(callback_query: types.CallbackQuery):
+    match = re.match(r"^Selected date from (.*) to (SE|PL): (.*)$", callback_query.data)
+    if match:
+        selected_port = match.group(1).lower()
+        selected_country = match.group(2)
+        selected_date = match.group(3).strip()
+
+    selected_date = datetime.datetime.strptime(selected_date, "%Y-%m-%d")
+
+    async with get_or_create_session() as session:
         port_from = await port_crud.get_port_by_name(selected_port.lower(), session)
         country_to = await country_crud.get_by_name(
             CountriesAbbreviatedName.SE.value
@@ -92,37 +133,15 @@ async def handle_today_ferries(message: types.Message):
             else CountriesAbbreviatedName.PL.value,
             session,
         )
-
-        ferries = await _get_ferries(port_from, country_to, now, session)
+        ferries = await _get_ferries(port_from, country_to, selected_date, session)
         formatted_ferries = await _format_ferries_as_string(ferries)
 
-        await session.close()
-        main_menu = KeyboardButton("/start")
-        keyboard.add(main_menu)
-
-        await message.answer(f"{formatted_ferries}", reply_markup=keyboard)
-
-
-@dp.message_handler(lambda message: message.text in ["Choose a date from PL to SE", "Choose a date from SE to PL"])
-async def handle_choose_date(message: types.Message):
-    direction = "PL to SE" if "PL to SE" in message.text else "SE to PL"
-
-    keyboard = generate_date_keyboard()
-    await message.answer(f"Please choose a date {direction}:", reply_markup=keyboard)
-
-
-@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith("select_date:"))
-async def handle_selected_date(callback_query: types.CallbackQuery):
-    data_parts = callback_query.data.split(":")
-    selected_date_str = data_parts[1]
-    direction = data_parts[2]  # Extract the direction from callback data
-    selected_date = datetime.datetime.strptime(selected_date_str, "%Y-%m-%d").date()
     user_id = callback_query.from_user.id
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    main_menu = KeyboardButton("/start")
+    keyboard.add(main_menu)
 
-    # Now you can use the 'direction' variable to determine the selected direction
-    # Perform actions accordingly based on the direction
-
-    await callback_query.message.edit_text(f"You selected the date: {selected_date}, Direction: {direction}")
+    await callback_query.message.answer(f"{formatted_ferries}", reply_markup=keyboard)
 
 
 async def _get_ferries(port_from: Port, country_to: Country, date: datetime.date, session: AsyncSession) -> list[Ferry]:
@@ -139,8 +158,9 @@ async def _get_ferries(port_from: Port, country_to: Country, date: datetime.date
     return list(ferries)
 
 
-async def _format_ferries_as_string(ferries):
+async def _format_ferries_as_string(ferries: list[Ferry]):
     formatted_ferries = []
+    ferries = sorted(ferries, key=lambda ferry: ferry.time_departure)
 
     for ferry_info in ferries:
         formatted_ferry = (

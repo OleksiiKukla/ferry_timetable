@@ -14,7 +14,7 @@ class Ferry(Base):
     time_arrival = sa.Column(sa.String(30))
     port_departure_id = sa.Column(sa.Integer, sa.ForeignKey("ports.id"))
     port_arrival_id = sa.Column(sa.Integer, sa.ForeignKey("ports.id"))
-
+    # owner_id = sa.Column(sa.Integer, sa.ForeignKey("ferry_owners.id"))
     ports = relationship("Port", secondary="port_ferry", back_populates="ferries")
 
 

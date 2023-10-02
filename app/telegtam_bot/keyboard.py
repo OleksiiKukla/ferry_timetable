@@ -40,12 +40,26 @@ async def generate_port_keyboard(country_departure, session):
     return keyboard
 
 
-def generate_date_keyboard():
-    keyboard = InlineKeyboardMarkup(row_width=7)
+def generate_date_keyboard(selected_port: str, selected_country: str) -> KeyboardButton:
+    keyboard = InlineKeyboardMarkup(row_width=2)
+
     today = datetime.datetime.now().date()
     for i in range(7):
         date = today + datetime.timedelta(days=i)
         button_text = date.strftime("%Y-%m-%d")
-        button_callback = f"select_date:{date}"
-        keyboard.insert(InlineKeyboardButton(text=button_text, callback_data=button_callback))
+        button_callback = f"Selected date from {selected_port.capitalize()} to {selected_country}: {date}"
+
+        if i % 2 == 0:
+            button = InlineKeyboardButton(
+                text=f"📆 {button_text}",
+                callback_data=button_callback,
+            )
+        else:
+            button = InlineKeyboardButton(
+                text=f"📆 {button_text}",
+                callback_data=button_callback,
+            )
+
+        keyboard.insert(button)
+
     return keyboard

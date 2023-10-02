@@ -15,9 +15,8 @@ def parse_polferries() -> None:
 
 
 async def _parse_polferries() -> None:
-    session = get_or_create_session()
-    parser = Parser()
-    await parser.parser_polferries(session)
-    await session.close()
+    async with get_or_create_session() as session:
+        parser = Parser()
+        await parser.parser_polferries(session)
 
     logger.info("Polferries parsed.")
