@@ -14,7 +14,7 @@ __async_session = None
 def get_or_create_engine() -> Engine:
     global __engine
     if not __engine:
-        __engine = create_async_engine(app.core.config.settings.SQLALCHEMY_DATABASE_URI, future=True)
+        __engine = create_async_engine(app.core.config.settings.SQLALCHEMY_DATABASE_URI, future=True, echo=True)
     return __engine
 
 

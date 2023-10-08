@@ -1,5 +1,7 @@
 from geopy.geocoders import Nominatim
 
+from app.schemas.enums import Languages
+
 
 def replace_polish_chars(input_string: str) -> str:
     """
@@ -37,3 +39,9 @@ async def get_country_from_city(city_name) -> tuple[str, str]:
             raise ValueError("Country not found")
     except Exception as e:
         raise ValueError(str(e))
+
+
+async def get_language_enum(language: str) -> "Languages":
+    language_mapping = {"English": Languages.ENGLISH, "Ukrainian": Languages.UKRAINIAN, "Polish": Languages.POLISH}
+
+    return language_mapping.get(language)

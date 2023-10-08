@@ -1,0 +1,26 @@
+{
+    "greeting": "Оберіть напрямок.",
+    "from_pl_to_se": "З Польщі до Швеції",
+    "from_se_to_pl": "З Швеції до Польщі",
+    "choose_port_departure": "Оберіть порт відправлення в {country}",
+    "choose_date": "Oберіть iншу дату відправлення з {port} до {country}",
+    "invalid_port_selection": "Недійсний формат вибору порту. Оберіть порт.",
+    "ferries_today": "Сьогоднішні пароми з {port} до {country}",
+    "ferry_info": "Назва парому: {name}\nДата: {date}\nЧас відправлення: {departure_time}\nЧас прибуття: {arrival_time}\nПорт прибуття: {arrival_port} ({country})",
+    "main_menu": "/start",
+    "change_language": "Будь ласка, виберіть мову на яку хочете змінити.",
+    "from": "З",
+    "to": "до",
+    "poland": "Польщі",
+    "sweden": "Швеції",
+    "date_massage": "Будь ласка, оберіть дату відправлення з {port} до {country}:",
+    "choose_date_massage": "Oберіть дату відправлення з {port} до {country}",
+    "chosen_date_massage": "Вибрана дата з {port} до {country}: {date}",
+    "ferry_info_ferry_name": "Назва парому",
+    "ferry_info_date": "Дата",
+    "ferry_info_departure_time": "Час відправлення",
+    "ferry_info_arrival_time": "Час прибуття",
+    "ferry_info_arrival_port": "Порт прибуття",
+    "ferry_info_departure_port": "Порт відправлення"
+
+}

@@ -1,0 +1,25 @@
+{
+    "greeting": "Wybierz kierunek.",
+    "from_pl_to_se": "Z Polski do Swecji",
+    "from_se_to_pl": "Z Swecji do Polski",
+    "choose_port_departure": "Wybierz port wylotu w {country}",
+    "choose_date": "Wybierz inna datę wylotu z {port} do {country}",
+    "invalid_port_selection": "Nieprawidłowy format wyboru portu. Wybierz port.",
+    "ferries_today": "Dzisiejsze promy z {port} do {country}",
+    "main_menu": "/start",
+    "change_language": "Proszę wybrać język, który chcesz zmienić",
+    "from": "Z",
+    "to": "do",
+    "poland": "Polski",
+    "sweden": "Swecji",
+    "date_massage": "Proszę wybrać datę wylotu z {port} do {country}:",
+    "choose_date_massage": "Wybierz datę wylotu z {port} do {country}",
+    "chosen_date_massage": "Wybrana data wylotu z {port} do {country}: {date}",
+    "ferry_info_ferry_name": "Nazwa promu",
+    "ferry_info_date": "Data",
+    "ferry_info_departure_time": "Godzina wylotu",
+    "ferry_info_arrival_time": "Godzina przybycia",
+    "ferry_info_arrival_port": "Port przybycia",
+    "ferry_info_departure_port": "Port wylotu"
+
+}

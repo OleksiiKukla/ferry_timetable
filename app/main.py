@@ -13,6 +13,8 @@ app = FastAPI(
     title="Name of service",
     description="Description of your service",
     version="Version of service",
+    docs_url=None,
+    redoc_url=None,
 )
 
 WEBHOOK_PATH = f"/bot/{settings.TELEGRAM_API_TOKEN}"

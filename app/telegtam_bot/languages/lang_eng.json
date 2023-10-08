@@ -1,0 +1,26 @@
+{
+    "greeting": "Choose a direction.",
+    "from_pl_to_se": "From Poland to Sweden",
+    "from_se_to_pl": "From Sweden to Poland",
+    "choose_port_departure": "Choose a port {country} of departure",
+    "choose_date": "Choose another departure date from {port} to {country}",
+    "invalid_port_selection": "Invalid port selection format. Please choose a port.",
+    "ferries_today": "Today's ferries from {port} to {country}",
+    "main_menu": "/start",
+    "change_language": "Please select the language to change",
+    "from": "From",
+    "to": "to",
+    "poland": "Poland",
+    "sweden": "Sweden",
+    "date_massage": "Please choose a departure date from {port} to {country}:",
+    "choose_date_massage": "Choose a departure date from {port} to {country}",
+    "chosen_date_massage": "Selected date from {port} to {country}: {date}",
+    "ferry_info_ferry_name": "Ferry name",
+    "ferry_info_date": "Date",
+    "ferry_info_departure_time": "Departure Time",
+    "ferry_info_arrival_time": "Arrival Time",
+    "ferry_info_arrival_port": "Arrival port",
+    "ferry_info_departure_port": "Departure port"
+
+
+}
