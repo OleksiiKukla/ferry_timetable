@@ -44,6 +44,8 @@ class CRUDFerry(CRUDBase[Ferry, FerryCreateSchemas, FerryCreateSchemas]):
             self.model.date,
             self.model.time_departure,
             self.model.time_arrival,
+            self.model.port_departure_id,
+            self.model.port_arrival_id,
         ).where(
             self.model.port_departure_id == port_departure_id,
             self.model.port_arrival_id == port_arrival_id,

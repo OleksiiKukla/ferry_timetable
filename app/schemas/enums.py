@@ -20,3 +20,9 @@ class FerryNames(Enum):
 class Ports(Enum):
     YSTAD = "ystad"
     SWINOUJSCIE = "swinoujscie"
+
+
+class Languages(Enum):
+    ENGLISH = "eng"
+    UKRAINIAN = "ukr"
+    POLISH = "pl"

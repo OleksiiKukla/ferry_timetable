@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
-from app.models import Port
+from app.models import Country, Port
 from app.schemas.port_schemas import PortSchemas
 
 
@@ -13,11 +13,16 @@ class CRUDPort(CRUDBase[Port, PortSchemas, PortSchemas]):
 
     async def get_port_by_id(self, port_id: int, db: AsyncSession) -> "Port" | None:
         if port_id:
-            query = select(
-                self.model.id,
-                self.model.name,
-                self.model.country_id,
-            ).where(self.model.id == port_id)
+            query = (
+                select(
+                    self.model.id,
+                    self.model.name,
+                    self.model.country_id,
+                )
+                .join(Country)
+                .where(self.model.id == port_id)
+            )
+
             port = await db.execute(query)
             return port.one_or_none()
 
