@@ -36,14 +36,13 @@ class CRUDPort(CRUDBase[Port, PortSchemas, PortSchemas]):
         return port.all()
 
     async def get_port_by_name(self, port_name: str, db: AsyncSession) -> "Port" | None:
-        if port_name:
-            query = select(
-                self.model.id,
-                self.model.name,
-                self.model.country_id,
-            ).where(self.model.name == port_name)
-            port = await db.execute(query)
-            return port.one_or_none()
+        query = select(
+            self.model.id,
+            self.model.name,
+            self.model.country_id,
+        ).where(self.model.name == port_name)
+        port = await db.execute(query)
+        return port.one_or_none()
 
     async def create_port(
         self,

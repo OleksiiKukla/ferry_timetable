@@ -1,10 +1,10 @@
 import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
-from app.models import Ferry
+from app.models import Ferry, Owner
 from app.schemas.ferry_schemas import FerryCreateSchemas
 
 # FerryType = TypeVar("FerryType", bound=Base)
@@ -46,6 +46,7 @@ class CRUDFerry(CRUDBase[Ferry, FerryCreateSchemas, FerryCreateSchemas]):
             self.model.time_arrival,
             self.model.port_departure_id,
             self.model.port_arrival_id,
+            self.model.owner_id,
         ).where(
             self.model.port_departure_id == port_departure_id,
             self.model.port_arrival_id == port_arrival_id,
@@ -54,5 +55,38 @@ class CRUDFerry(CRUDBase[Ferry, FerryCreateSchemas, FerryCreateSchemas]):
         ferries = await db.execute(query)
         return ferries.all()
 
+    async def get_all(
+        self,
+        db: AsyncSession,
+    ) -> list["Ferry"]:
+        query = select(
+            self.model.id,
+            self.model.name,
+            self.model.date,
+            self.model.time_departure,
+            self.model.time_arrival,
+            self.model.port_departure_id,
+            self.model.port_arrival_id,
+            self.model.owner_id,
+        )
+        ferries = await db.execute(query)
+        return ferries.all()
+
+    async def change_owner(
+        self,
+        db: AsyncSession,
+        ferry_id:int,
+        owner_id: int,
+    ) -> "Ferry":
+        query = (
+            update(self.model)
+            .where(self.model.id == ferry_id)
+            .values(owner_id=owner_id)
+            .returning(self.model)
+        )
+        result = await db.execute(query)
+        updated_card = result.one_or_none()
+        await db.commit()
+        return updated_card
 
 ferry_crud = CRUDFerry(model=Ferry)

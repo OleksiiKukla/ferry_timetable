@@ -26,3 +26,7 @@ class Languages(Enum):
     ENGLISH = "eng"
     UKRAINIAN = "ukr"
     POLISH = "pl"
+
+class Owners(Enum):
+    POLFERRIES = "polferries"
+    UNITY_LINE = 'unity_line'
