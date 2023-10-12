@@ -33,7 +33,7 @@ def get_message(text_key, language: str) -> str:
 
 
 def generate_common_keyboard(port_departure: str, country_arrival: str, user: User) -> tuple[str, ReplyKeyboardMarkup]:
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     today_str = get_message("ferries_today", language=user.language.value)
     choose_date_str = get_message("choose_date", language=user.language.value)
@@ -119,7 +119,7 @@ def generate_date_keyboard(selected_port: str, selected_country: str, user: User
 
 
 async def greeting_text_keyboard(user) -> tuple[str, ReplyKeyboardMarkup]:
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     from_pl_to_se = KeyboardButton(get_message("from_pl_to_se", language=user.language.value))
     from_se_to_pl = KeyboardButton(get_message("from_se_to_pl", language=user.language.value))
